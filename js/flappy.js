@@ -22,7 +22,9 @@ function preload() {
 
 game.load.image("playerImg", "../assets/BarryB.png");
 
-game.load.audio("score", "../assets/mr krabs.mp3");
+game.load.audio("krabs", "../assets/mr krabs.mp3");
+
+game.load.audio("score", "../assets/point.ogg");
 
 game.load.image("pipeBlock","../assets/pipe.png");
 
@@ -34,7 +36,7 @@ function create() {
 
 game.stage.setBackgroundColor("#F56AB6");
 
-player = game.add.sprite(395, 10, "playerImg");
+player = game.add.sprite(100, 100, "playerImg");
 
 game.add.text(20, 20, "Bazjob Stimulator", {font: "30px Comic Sans MS", fill: "#FDEA21"});
 
@@ -65,10 +67,16 @@ game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 .onDown.add(playerJump);
 
 game.input.onDown.add(clickHandler);
+var pipeInterval = 1.75 * Phaser.Timer.SECOND;
+game.time.events.loop(
+    pipeInterval,
+    generatePipe
+);
 }
-
+generatePipe();
+addPipeBlock();
 function spaceHandler() {
-		game.sound.play("score");
+		game.sound.play("krabs");
     player.body.velocity.y = -200;
 }
 function moveRight() {
@@ -93,10 +101,29 @@ function playerJump() {
 function clickHandler(event) {
     game.add.sprite(event.x, event.y, "playerImg");
 }
+function generatePipe() {
+	function generatePipe() {
+	    var gap = game.rnd.integerInRange(1 ,5);
+	    for (var count = 0; count < 8; count++) {
+	        if (count != gap && count != gap+1) {
+	            addPipeBlock(750, count * 50);
+	        }
+	    }
+	    changeScore();
+	}
+
+}
+function addPipeBlock(x, y) {
+    var pipeBlock = game.add.sprite(x,y,"pipeBlock");
+    pipes.push(pipeBlock);
+    game.physics.arcade.enable(pipeBlock);
+    pipeBlock.body.velocity.x = -200;
+}
+
+
+
 /*
  * This function updates the scene. It is called for every new frame.
  */
 function update() {
-
-
 }

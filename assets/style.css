@@ -15,11 +15,12 @@ font-family: "Comic Sans MS";
 }
 
 .score {
-    color: gray;
+    color: deeppink;
 }
 
 .gold {
     color: gold;
+    font-size: 20px;
 }
 #gameLink {
     text-align: center;
