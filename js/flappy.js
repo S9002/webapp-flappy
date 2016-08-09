@@ -44,10 +44,11 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
 
 game.physics.arcade.enable(player);
 
-player.body.gravity.y = 10;
+player.body.gravity.y = 200;
 
 game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
-										.onDown.add(moveLeft);
+										.onDown.add(moveRight);
+
 game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
 										.onDown.add(moveLeft);
 
@@ -62,34 +63,40 @@ game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
 game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 .onDown.add(playerJump);
+
+game.input.onDown.add(clickHandler);
 }
-/*
- * This function updates the scene. It is called for every new frame.
- */
-function update() {
 
 function spaceHandler() {
 		game.sound.play("score");
     player.body.velocity.y = -200;
 }
 function moveRight() {
-	player.x = player.x + 10;
+	player.body.velocity.x = 100;
 }
 
 function moveLeft() {
-	player.x = player.x + -10;
+	player.body.velocity.x = -100;
 }
 
 function moveUp() {
-	player.y = player.y + -10;
+	player.body.velocity.y = -200;
 }
 
 function moveDown() {
-	player.y = player.y + 10;
+	player.body.velocity.y = 100;
 }
 
 function playerJump() {
 		player.body.velocity.y = -200;
 }
+function clickHandler(event) {
+    game.add.sprite(event.x, event.y, "playerImg");
+}
+/*
+ * This function updates the scene. It is called for every new frame.
+ */
+function update() {
+
 
 }
