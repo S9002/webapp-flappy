@@ -15,18 +15,28 @@ var player;
 
 var labelScore;
 
+var pipeInterval;
+
+var pipeBlock;
+
+var pipes = [];
+
+var changeScore;
+
 /*
  * Loads all resources for the game and gives them names.
  */
 function preload() {
 
-game.load.image("playerImg", "../assets/BarryB.png");
+game.load.image("playerImg", "../assets/BarryC.png");
 
 game.load.audio("krabs", "../assets/mr krabs.mp3");
 
-game.load.audio("score", "../assets/point.ogg");
+game.load.audio("score", "../assets/Point2.wav");
 
 game.load.image("pipeBlock","../assets/pipe.png");
+
+game.load.audio("flap", "../assets/flap.wav");
 
 }
 /*
@@ -46,7 +56,7 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
 
 game.physics.arcade.enable(player);
 
-player.body.gravity.y = 200;
+player.body.gravity.y = 300;
 
 game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
 										.onDown.add(moveRight);
@@ -72,12 +82,13 @@ game.time.events.loop(
     pipeInterval,
     generatePipe
 );
+changeScore();
+changeScore();
+alert(score);
 }
-generatePipe();
-addPipeBlock();
 function spaceHandler() {
-		game.sound.play("krabs");
-    player.body.velocity.y = -200;
+		game.sound.play("flap");
+    player.body.velocity.y = -150;
 }
 function moveRight() {
 	player.body.velocity.x = 100;
@@ -88,7 +99,7 @@ function moveLeft() {
 }
 
 function moveUp() {
-	player.body.velocity.y = -200;
+	player.body.velocity.y = -150;
 }
 
 function moveDown() {
@@ -96,29 +107,39 @@ function moveDown() {
 }
 
 function playerJump() {
-		player.body.velocity.y = -200;
+		player.body.velocity.y = -150;
 }
 function clickHandler(event) {
     game.add.sprite(event.x, event.y, "playerImg");
-}
-function generatePipe() {
-	function generatePipe() {
-	    var gap = game.rnd.integerInRange(1 ,5);
-	    for (var count = 0; count < 8; count++) {
-	        if (count != gap && count != gap+1) {
-	            addPipeBlock(750, count * 50);
-	        }
-	    }
-	    changeScore();
-	}
+  }
 
+  function gameOver(){
+  game.destroy();
 }
-function addPipeBlock(x, y) {
-    var pipeBlock = game.add.sprite(x,y,"pipeBlock");
-    pipes.push(pipeBlock);
-    game.physics.arcade.enable(pipeBlock);
-    pipeBlock.body.velocity.x = -200;
+
+  function addPipeBlock(x, y) {
+      var pipeBlock = game.add.sprite(x,y,"pipeBlock");
+  game.physics.arcade.enable(pipeBlock);
+      pipes.push(pipeBlock);
+
+      pipeBlock.body.velocity.x = -200;
+  }
+
+  function generatePipe() {
+      var gap = game.rnd.integerInRange(1 ,5);
+      for (var count = 0; count < 8; count++) {
+          if (count != gap && count != gap+1) {
+              addPipeBlock(750, count * 50);
+          }
+      }
+      changeScore();
+  }
+  function changeScore() {
+	score = score + 1;
+  game.sound.play("score");
+  labelScore.setText(score.toString());
 }
+
 
 
 
@@ -126,4 +147,13 @@ function addPipeBlock(x, y) {
  * This function updates the scene. It is called for every new frame.
  */
 function update() {
+  game.physics.arcade.overlap(
+    player,
+  pipes,
+  gameOver);
+}
+
+function gameOver(){
+location.reload();
+
 }
