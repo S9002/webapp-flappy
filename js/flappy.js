@@ -10,6 +10,7 @@ var stateActions = { preload: preload, create: create, update: update };
 var game = new Phaser.Game(790, 400, Phaser.AUTO, 'game', stateActions);
 
 var score;
+score = 0;
 
 var player;
 
@@ -22,6 +23,16 @@ var pipeBlock;
 var pipes = [];
 
 var changeScore;
+
+var width = 790;
+
+var height = 400;
+
+var gameSpeed = 200;
+
+var gameGravity = 200;
+
+var jumpPower = 200;
 
 /*
  * Loads all resources for the game and gives them names.
@@ -47,6 +58,7 @@ function create() {
 game.stage.setBackgroundColor("#F56AB6");
 
 player = game.add.sprite(100, 100, "playerImg");
+player.anchor.setTo(0.5, 0.5);
 
 game.add.text(20, 20, "Bazjob Stimulator", {font: "30px Comic Sans MS", fill: "#FDEA21"});
 
@@ -82,9 +94,7 @@ game.time.events.loop(
     pipeInterval,
     generatePipe
 );
-changeScore();
-changeScore();
-alert(score);
+score = 0;
 }
 function spaceHandler() {
 		game.sound.play("flap");
@@ -113,9 +123,7 @@ function clickHandler(event) {
     game.add.sprite(event.x, event.y, "playerImg");
   }
 
-  function gameOver(){
-  game.destroy();
-}
+
 
   function addPipeBlock(x, y) {
       var pipeBlock = game.add.sprite(x,y,"pipeBlock");
@@ -151,9 +159,17 @@ function update() {
     player,
   pipes,
   gameOver);
+
+
+
+if(player.body.y < 0 || player.body.y > 400){
+    gameOver();
 }
-
 function gameOver(){
-location.reload();
+game.state.restart();
 
+
+
+}
+player.rotation = Math.atan(player.body.velocity.y / 200);
 }

@@ -1,4 +1,6 @@
 jQuery("#credits").on("click", function() {
-    var message = "Game created by Bob!";
-    alert(message);
+    var message = "Game created by the one and only, your boi Stern";
+    jQuery("#credits").append(
+        "<p>" + message + "</p>"
+    );
 });
