@@ -13,6 +13,8 @@ score = -1;
 
 var player;
 
+var backround;
+
 var labelScore;
 
 var pipeInterval;
@@ -58,6 +60,8 @@ game.load.image("pipeBlock","../assets/pipe.png");
 
 game.load.image("pipeEnd","../assets/pipe-end.png");
 
+game.load.image("Backround","../assets/Backround.png");
+
 game.load.audio("flap", "../assets/flap.wav");
 
 }
@@ -67,6 +71,8 @@ game.load.audio("flap", "../assets/flap.wav");
 function create() {
 
 game.stage.setBackgroundColor("#F56AB6");
+
+backround = game.add.sprite(0, 0, "Backround");
 
 player = game.add.sprite(100, 100, "playerImg");
 player.anchor.setTo(0.5, 0.5);
@@ -100,12 +106,17 @@ game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 .onDown.add(playerJump);
 
 game.input.onDown.add(clickHandler);
+
 var pipeInterval = 1.75 * Phaser.Timer.SECOND;
 game.time.events.loop(
     pipeInterval,
     generatePipe
 );
+
+
 }
+
+
 function spaceHandler() {
 		game.sound.play("flap");
     player.body.velocity.y = -150;
@@ -170,7 +181,9 @@ function addPipeBlock(x, y) {
   game.sound.play("score");
   labelScore.setText(score.toString());
 }
-
+function Fall() {
+game.input.disabled = true;
+}
 
 
 
@@ -178,22 +191,22 @@ function addPipeBlock(x, y) {
  * This function updates the scene. It is called for every new frame.
  */
 function update() {
-  game.physics.arcade.overlap(
+game.physics.arcade.overlap(
     player,
   pipes,
-  gameOver);
-
-
+  gameOver
+);
 
 if(player.body.y < 0 || player.body.y > 400){
     gameOver();
 }
+
 function gameOver(){
-	score = -1;
+game.input.disabled = false;
+	score = -2;
 game.state.restart();
-
-
 
 }
 player.rotation = Math.atan(player.body.velocity.y / 200);
+
 }
