@@ -8,9 +8,8 @@ var stateActions = { preload: preload, create: create, update: update };
 // - element where the game will be drawn ('game')
 // - actions on the game state (or null for nothing)
 var game = new Phaser.Game(790, 400, Phaser.AUTO, 'game', stateActions);
-
 var score;
-score = 0;
+score = -1;
 
 var player;
 
@@ -34,6 +33,16 @@ var gameGravity = 200;
 
 var jumpPower = 200;
 
+var gapSize = 150;
+
+var gapMargin = 200;
+
+var blockHeight = 50;
+
+var pipeEndExtraWidth = 10;
+
+var pipeEndHeight = 10;
+
 /*
  * Loads all resources for the game and gives them names.
  */
@@ -46,6 +55,8 @@ game.load.audio("krabs", "../assets/mr krabs.mp3");
 game.load.audio("score", "../assets/Point2.wav");
 
 game.load.image("pipeBlock","../assets/pipe.png");
+
+game.load.image("pipeEnd","../assets/pipe-end.png");
 
 game.load.audio("flap", "../assets/flap.wav");
 
@@ -94,7 +105,6 @@ game.time.events.loop(
     pipeInterval,
     generatePipe
 );
-score = 0;
 }
 function spaceHandler() {
 		game.sound.play("flap");
@@ -121,11 +131,18 @@ function playerJump() {
 }
 function clickHandler(event) {
     game.add.sprite(event.x, event.y, "playerImg");
-  }
+	}
+
+function addPipeEnd(x, y) {
+	var pipeEnd = game.add.sprite(x,y,"pipeEnd");
+	game.physics.arcade.enable(pipeEnd);
+	pipes.push(pipeEnd);
+	pipeEnd.body.velocity.x = -200;
+}
 
 
 
-  function addPipeBlock(x, y) {
+function addPipeBlock(x, y) {
       var pipeBlock = game.add.sprite(x,y,"pipeBlock");
   game.physics.arcade.enable(pipeBlock);
       pipes.push(pipeBlock);
@@ -133,15 +150,21 @@ function clickHandler(event) {
       pipeBlock.body.velocity.x = -200;
   }
 
-  function generatePipe() {
-      var gap = game.rnd.integerInRange(1 ,5);
-      for (var count = 0; count < 8; count++) {
-          if (count != gap && count != gap+1) {
-              addPipeBlock(750, count * 50);
-          }
-      }
-      changeScore();
-  }
+	function generatePipe() {
+	    var gapStart = game.rnd.integerInRange(gapMargin, height - gapSize - gapMargin);
+
+	    addPipeEnd(width - (pipeEndExtraWidth / 2), gapStart - pipeEndHeight);
+	    for(var y = gapStart - pipeEndHeight; y > 0; y -= blockHeight) {
+	        addPipeBlock(width, y - blockHeight);
+	    }
+
+	    addPipeEnd(width - (pipeEndExtraWidth / 2), gapStart + gapSize);
+	    for(var y = gapStart + gapSize + pipeEndHeight; y < height; y += blockHeight) {
+	        addPipeBlock(width, y);
+	    }
+
+	    changeScore();
+	}
   function changeScore() {
 	score = score + 1;
   game.sound.play("score");
@@ -166,6 +189,7 @@ if(player.body.y < 0 || player.body.y > 400){
     gameOver();
 }
 function gameOver(){
+	score = -1;
 game.state.restart();
 
 
